@@ -1,5 +1,5 @@
 {% extends 'layout.html' %}
-{% block title %}Book Tour - ExploreVenture{% endblock %}
+{% block title %}Book Tour - Wonderlust Tours{% endblock %}
 {% block content %}
 <h2>Book {{ tour.title }}</h2>
 <form action="{{ url_for('routes.book', tour_id=tour.id) }}" method="post">
