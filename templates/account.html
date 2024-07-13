@@ -1,0 +1,14 @@
+{% extends 'layout.html' %}
+{% block title %}My Account - ExploreVenture{% endblock %}
+{% block content %}
+<h2>My Account</h2>
+<h3>Upcoming Trips</h3>
+<ul class="list-group">
+  {% for trip in upcoming_trips %}
+  <li class="list-group-item">
+    <h5>{{ trip.tour.title }}</h5>
+    <p>{{ trip.date }}</p>
+  </li>
+  {% endfor %}
+</ul>
+{% endblock %}
