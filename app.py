@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for
+from routes import routes
 import sqlite3
-from werkzeug.security import generate_password_hash
 
 app = Flask(__name__)
 
@@ -12,6 +12,10 @@ def init_db():
 
 # Initialize the database
 init_db()
+print("Database Initialization Successful")
+
+# Register blueprints
+app.register_blueprint(routes)
 
 @app.route('/')
 def index():
