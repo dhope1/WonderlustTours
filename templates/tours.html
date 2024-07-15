@@ -1,0 +1,19 @@
+{% extends 'layout.html' %}
+{% block title %}Tours - Wonderlust Tours{% endblock %}
+{% block content %}
+<h2>Available Tours</h2>
+<div class="row">
+  {% for tour in tours %}
+  <div class="col-md-4">
+    <div class="card mb-4">
+      <img src="{{ url_for('static', filename='img/' ~ tour.image_filename) }}" class="card-img-top" alt="{{ tour.title }}">
+      <div class="card-body">
+        <h5 class="card-title">{{ tour.title }}</h5>
+        <p class="card-text">{{ tour.description[:100] }}...</p>
+        <a href="{{ url_for('routes.tour_detail', tour_id=tour.id) }}" class="btn btn-primary">View Details</a>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}
