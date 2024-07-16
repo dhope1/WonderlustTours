@@ -4,6 +4,14 @@ from werkzeug.security import generate_password_hash
 
 routes = Blueprint('user', __name__)
 
+@routes.route('/tours')
+def tours():
+    return render_template('tours.html')
+
+@routes.route('/account')
+def account():
+    return render_template('account.html')
+
 @routes.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
