@@ -1,7 +1,38 @@
 {% extends 'layout.html' %}
+
 {% block title %}Tours - Wonderlust Tours{% endblock %}
+
 {% block content %}
 <h2>Available Tours</h2>
+
+<!-- Filters -->
+<div class="filters">
+  <form class="form-inline">
+    <div class="form-group mr-3">
+      <label for="filterPrice">Filter by Price:</label>
+      <select class="form-control" id="filterPrice">
+        <option value="all">All Prices</option>
+        <option value="budget">Budget</option>
+        <option value="standard">Standard</option>
+        <option value="luxury">Luxury</option>
+      </select>
+    </div>
+    <div class="form-group mr-3">
+      <label for="filterLocation">Filter by Location:</label>
+      <select class="form-control" id="filterLocation">
+        <option value="all">All Locations</option>
+        <option value="europe">Europe</option>
+        <option value="asia">Asia</option>
+        <option value="america">America</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <button type="button" class="btn btn-primary" id="btnApplyFilters">Apply Filters</button>
+    </div>
+  </form>
+</div>
+
+<!-- Tours Grid -->
 <div class="row">
   {% for tour in tours %}
   <div class="col-md-4">
@@ -10,10 +41,29 @@
       <div class="card-body">
         <h5 class="card-title">{{ tour.title }}</h5>
         <p class="card-text">{{ tour.description[:100] }}...</p>
+        <p class="card-text"><strong>Price:</strong> ${{ tour.price }}</p>
+        <p class="card-text"><strong>Location:</strong> {{ tour.location }}</p>
         <a href="{{ url_for('routes.tour_detail', tour_id=tour.id) }}" class="btn btn-primary">View Details</a>
       </div>
     </div>
   </div>
   {% endfor %}
 </div>
+
+<script>
+  // JavaScript for applying filters
+  document.addEventListener('DOMContentLoaded', function() {
+    var btnApplyFilters = document.getElementById('btnApplyFilters');
+    btnApplyFilters.addEventListener('click', function() {
+      var filterPrice = document.getElementById('filterPrice').value;
+      var filterLocation = document.getElementById('filterLocation').value;
+      
+      // Example: Perform filtering logic here based on filterPrice and filterLocation
+      // You would typically fetch data from the server using AJAX and update the UI accordingly.
+      // For demonstration purposes, this script shows an alert with selected filters.
+      alert('Filters applied: Price=' + filterPrice + ', Location=' + filterLocation);
+    });
+  });
+</script>
+
 {% endblock %}
