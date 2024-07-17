@@ -3,68 +3,15 @@
 {% block title %}Home - Wonderlust Tours{% endblock %}
 
 {% block styles %}
-  <style>
-    /* Custom styles specific to index.html */
-    .slideshow-container {
-      max-width: 100%;
-      position: relative;
-      overflow: hidden;
-      height: 450px; /* Adjusting height as needed */
-    }
 
-    .slideshow-container img {
-      width: 100%;
-      height: 100%;
-      position: absolute;
-      top: 0;
-      left: 0;
-      opacity: 0;
-      transition: opacity 1s ease-in-out;
-    }
-
-    .slideshow-container img.active {
-      opacity: 1;
-    }
-
-    .jumbotron {
-      position: absolute;
-      top: 50%; /* Center vertically */
-      left: 50%; /* Center horizontally */
-      transform: translate(-50%, -50%); /* Centering trick */
-      padding: 20px;
-      color: white;
-      text-align: center;
-      background-color: rgba(0, 0, 0, 0); /* transparent overlay */
-      width: 60%; /* Adjust width as desired */
-    }
-
-    .jumbotron .content {
-      position: relative;
-      z-index: 1;
-    }
-
-    .jumbotron a.btn {
-      background-color: rgba(255, 255, 0, 0.8); /* Pale yellow background */
-      color: black; /* Button text color */
-      border-color: transparent; /* Remove border */
-    }
-  </style>
+   
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+    
+ 
 {% endblock %}
 
 {% block scripts %}
-  <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      var slides = document.querySelectorAll('.slideshow-container img');
-      var currentSlide = 0;
-      var slideInterval = setInterval(nextSlide, 4000); // Change slide every 4 seconds
-
-      function nextSlide() {
-        slides[currentSlide].classList.remove('active');
-        currentSlide = (currentSlide + 1) % slides.length;
-        slides[currentSlide].classList.add('active');
-      }
-    });
-  </script>
+<script src="{{ url_for('static', filename='js/index.js') }}"></script>
 {% endblock %}
 
 {% block content %}
