@@ -15,46 +15,53 @@
   <img src="{{ url_for('static', filename='images/journey.jpg') }}">
 </div>
 
-
-    <div class="content-overlay">
-        <h2 class="text-center">Available Tours</h2>
-        <div class="filters mb-4">
-          <form class="form-inline justify-content-center">
-            <div class="form-group mr-3">
-              <label for="filterPrice">Price:</label>
-              <input type="number" class="form-control" id="filterPrice" placeholder="Enter max price in $USD">
-            </div>
-            <div class="form-group mr-3">
-              <label for="filterLocation">Filter by Location:</label>
-              <select class="form-control" id="filterLocation">
-                <option value="all">All Locations</option>
-                <option value="europe">Europe</option>
-                <option value="asia">Asia</option>
-                <option value="north-america">North America</option>
-                <option value="south-america">South America</option>
-                <option value="africa">Africa</option>
-                <option value="australia">Australia</option>
-                <option value="caribbean">Caribbean</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <button type="button" class="btn btn-primary" id="btnApplyFilters">Apply Filters</button>
-            </div>
-          </form>
+<div class="content-overlay">
+    <h2 class="text-center">Available Tours</h2>
+    <div class="filters mb-4">
+      <form class="form-inline justify-content-center">
+        <div class="form-group mr-3">
+          <label for="filterPrice">Price:</label>
+          <input type="number" class="form-control" id="filterPrice" placeholder="Enter max price in $USD">
         </div>
-      </div>
-      
-<div id="tourList" class="row">
-    <!-- Tour items will be inserted here dynamically -->
+        <div class="form-group mr-3">
+          <label for="filterLocation">Filter by Location:</label>
+          <select class="form-control" id="filterLocation">
+            <option value="all">All Locations</option>
+            <option value="europe">Europe</option>
+            <option value="asia">Asia</option>
+            <option value="north-america">North America</option>
+            <option value="south-america">South America</option>
+            <option value="africa">Africa</option>
+            <option value="australia">Australia</option>
+            <option value="caribbean">Caribbean</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <button type="button" class="btn btn-primary" id="btnApplyFilters">Apply Filters</button>
+        </div>
+      </form>
+    </div>
   </div>
+
+<div id="tourList" class="row">
+    {% for tour in tours %}
+    <div class="col-md-4">
+        <div class="card mb-4">
+            <img src="{{ url_for('static', filename='images/' ~ tour.image_filename) }}" class="card-img-top" alt="{{ tour.title }}">
+            <div class="card-body">
+                <h5 class="card-title">{{ tour.title }}</h5>
+                <p class="card-text">{{ tour.description[:100] }}...</p>
+                <a href="{{ url_for('user.book', tour_id=tour.id) }}" class="btn btn-primary">Book Here</a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
 </div>
 {% endblock %}
 
 {% block scripts %}
 <script>
-  // Passing the base URL from Flask to JavaScript
   var baseURL = "{{ url_for('static', filename='images/') }}";
 </script>
 <script src="{{ url_for('static', filename='js/tours.js') }}"></script>
-
 {% endblock %}
