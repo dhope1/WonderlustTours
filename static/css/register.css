@@ -1,0 +1,36 @@
+.background-image {
+    /*background: url('{{ url_for('static', filename='images/nature3.jpg') }}') no-repeat center center fixed; */
+    background: url('../images/ibex.jpg') no-repeat center center fixed;
+    background-size: cover;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+  }
+
+  .register-container {
+    text-align: center;
+    margin: auto;
+    padding: 20px;
+    background-color: rgba(255, 255, 255, 0.7); /* Increased transparency */
+    border-radius: 10px;
+    max-width: 400px; /* Adjusted max-width for centering */
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  .register-container form {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .form-control {
+    margin-bottom: 10px;
+  }
+
+  .btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+  }

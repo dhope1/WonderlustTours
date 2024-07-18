@@ -1,55 +1,47 @@
-{% extends 'layout.html' %}
-{% block title %}Register - Wonderlust Tours{% endblock %}
-{% block styles %}
-<style>
-  .form-container {
-    background-color: rgba(255, 255, 255, 0.7); /* Increased transparency */
-    padding: 30px;
-    border-radius: 10px;
-    max-width: 800px; /* Increased max-width */
-    margin: 50px auto;
-  }
-  .background-image {
-    background: url('{{ url_for('static', filename='images/nature3.jpg') }}') no-repeat center center fixed;
-    background-size: cover;
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-</style>
-{% endblock %}
-{% block content %}
-<div class="background-image">
-  <div class="form-container">
-    <h2>Register</h2>
-    <form method="post" action="{{ url_for('user.register') }}">
-      <div class="form-group">
-        <label for="username">Username</label>
-        <input type="text" class="form-control" id="username" name="username" required>
-      </div>
-      <div class="form-group">
-        <label for="email">Email</label>
-        <input type="email" class="form-control" id="email" name="email" required>
-      </div>
-      <div class="form-group">
-        <label for="first_name">First Name</label>
-        <input type="text" class="form-control" id="first_name" name="first_name" required>
-      </div>
-      <div class="form-group">
-        <label for="last_name">Last Name</label>
-        <input type="text" class="form-control" id="last_name" name="last_name" required>
-      </div>
-      <div class="form-group">
-        <label for="phone_number">Phone Number</label>
-        <input type="text" class="form-control" id="phone_number" name="phone_number" required>
-      </div>
-      <div class="form-group">
-        <label for="password">Password</label>
-        <input type="password" class="form-control" id="password" name="password" required>
-      </div>
-      <button type="submit" class="btn btn-primary">Register</button>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register - Wonderlust Tours</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/register.css') }}">
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="#">Wonderlust Tours</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ml-auto">
+        <li class="nav-item active">
+          <a class="nav-link" href="{{ url_for('index') }}">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('user.tours') }}">Tours</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('user.account') }}">Account</a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+  <div class="background-image"></div>
+  <div class="register-container">
+    <h2>Create an Account</h2>
+    <form method="POST" action="{{ url_for('user.register') }}">
+      <input type="text" class="form-control" name="username" placeholder="Username" required>
+      <input type="email" class="form-control" name="email" placeholder="Email" required>
+      <input type="text" class="form-control" name="first_name" placeholder="First Name" required>
+      <input type="text" class="form-control" name="last_name" placeholder="Last Name" required>
+      <input type="text" class="form-control" name="phone_number" placeholder="Phone Number" required>
+      <input type="password" class="form-control" name="password" placeholder="Password" required>
+      <button type="submit" class="btn btn-primary btn-block">Register</button>
     </form>
   </div>
-</div>
-{% endblock %}
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

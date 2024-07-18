@@ -1,69 +1,44 @@
-{% extends 'layout.html' %}
-{% block title %}Account - Wonderlust Tours{% endblock %}
-{% block styles %}
-<style>
-  .account-container {
-    text-align: center;
-    margin-top: 50px;
-    padding: 20px;
-    background-color: rgba(255, 255, 255, 0.5); /* Increased transparency */
-    border-radius: 10px;
-  }
-  .account-option {
-    margin: 20px;
-    padding: 15px;
-    border: 1px solid #ddd;
-    border-radius: 10px;
-    display: inline-block;
-    width: 200px; /* Increased width */
-    background-color: #007bff;
-  }
-  .account-option a {
-    text-decoration: none;
-    color: #fff;
-  }
-  .btn-signup {
-    background-color: #007bff;
-  }
-  .btn-login {
-    background-color: #28a745;
-  }
-  .background-image {
-    background: url('{{ url_for('static', filename='images/nature4.jpg') }}') no-repeat center center fixed;
-    background-size: cover;
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-  .quote {
-    font-size: 1.5em;
-    font-family: Verdana;
-    margin-top: 20px;
-    color: #333;
-  }
-</style>
-{% endblock %}
-{% block content %}
-<div class="background-image">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Account - Wonderlust Tours</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/account.css') }}">
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="#">Wonderlust Tours</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ml-auto">
+        <li class="nav-item active">
+          <a class="nav-link" href="{{ url_for('index') }}">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('user.tours') }}">Tours</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('user.account') }}">Account</a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+  <div class="background-image"></div>
   <div class="account-container">
     <h2>Manage Your Account</h2>
     <p>Please choose an option below:</p>
-    <div class="account-option btn-signup">
-      <a href="{{ url_for('user.register') }}">
-        <h3>Sign Up</h3>
-        <p>Create a new account</p>
-      </a>
-    </div>
-    <div class="account-option btn-login">
-      <a href="{{ url_for('user.login') }}">
-        <h3>Login</h3>
-        <p>Already have an account</p>
-      </a>
-    </div>
+    <button class="account-option signup" onclick="location.href='{{ url_for('user.register') }}'">Sign Up</button>
+    <button class="account-option login" onclick="location.href='{{ url_for('user.login') }}'">Login</button>
     <div class="quote">
       "Travel far enough, you meet yourself." - David Mitchell
     </div>
   </div>
-</div>
-{% endblock %}
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
