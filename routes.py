@@ -33,3 +33,21 @@ def register():
         return redirect(url_for('index'))
     
     return render_template('register.html')
+
+@routes.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        email = request.form['email']
+        password = request.form['password']
+
+        with sqlite3.connect('wonderlust_tours.db') as conn:
+            cur = conn.cursor()
+            cur.execute('SELECT * FROM users WHERE email = ?', (email,))
+            user = cur.fetchone()
+            if user and generate_password_hash(user[5], password):
+                session['user_id'] = user[0]
+                return redirect(url_for('index'))
+            else:
+                flash('Invalid email or password')
+
+    return render_template('login.html')
