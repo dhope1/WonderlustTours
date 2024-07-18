@@ -1,9 +1,62 @@
 {% extends 'layout.html' %}
+
 {% block title %}Home - Wonderlust Tours{% endblock %}
+
+{% block styles %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/index.js') }}"></script>
+{% endblock %}
+
 {% block content %}
-<div class="jumbotron">
-  <h1 class="display-4">Welcome to Wonderlust Tours</h1>
-  <p class="lead">Discover amazing tours and adventures around the world.</p>
-  <a class="btn btn-primary btn-lg" href="{{ url_for('user.tours') }}" role="button">Explore Tours</a>
+<div class="slideshow-container">
+  <img src="{{ url_for('static', filename='images/stones.jpg') }}" class="active">
+  <img src="{{ url_for('static', filename='images/boat.jpg') }}">
+  <img src="{{ url_for('static', filename='images/nature.jpg') }}">
+  <img src="{{ url_for('static', filename='images/notepad.jpg') }}">
+  <img src="{{ url_for('static', filename='images/cosmos.jpg') }}">
+  <img src="{{ url_for('static', filename='images/river.jpg') }}">
 </div>
-{% endblock %} 
+
+<div class="jumbotron">
+  <div class="container text-center content">
+    <h1 class="display-4">Welcome to Wonderlust Tours</h1>
+    <p class="lead">Explore the world with our unforgettable tours and adventures.</p>
+    <a class="btn btn-primary btn-lg" href="{{ url_for('user.tours') }}" role="button">Explore Tours</a>
+  </div>
+</div>
+
+<div class="container my-5">
+  <div class="row">
+    <div class="col-md-4">
+      <div class="card mb-4 shadow-sm">
+        <img class="card-img-top" src="{{ url_for('static', filename='images/girl.jpg') }}" alt="Card image cap">
+        <div class="card-body">
+          <h5 class="card-title">Discover New Destinations</h5>
+          <p class="card-text">Find amazing places you've never been to.</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card mb-4 shadow-sm">
+        <img class="card-img-top" src="{{ url_for('static', filename='images/umbrella.jpg') }}" alt="Card image cap">
+        <div class="card-body">
+          <h5 class="card-title">Adventure Awaits</h5>
+          <p class="card-text">Embark on thrilling adventures across the globe.</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card mb-4 shadow-sm">
+        <img class="card-img-top" src="{{ url_for('static', filename='images/beach.jpg') }}" alt="Card image cap">
+        <div class="card-body">
+          <h5 class="card-title">Book Your Dream Vacation</h5>
+          <p class="card-text">Plan and book your dream vacation hassle-free.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
