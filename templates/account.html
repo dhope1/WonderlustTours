@@ -1,14 +1,69 @@
 {% extends 'layout.html' %}
-{% block title %}My Account - Wonderlust Tours{% endblock %}
+{% block title %}Account - Wonderlust Tours{% endblock %}
+{% block styles %}
+<style>
+  .account-container {
+    text-align: center;
+    margin-top: 50px;
+    padding: 20px;
+    background-color: rgba(255, 255, 255, 0.5); /* Increased transparency */
+    border-radius: 10px;
+  }
+  .account-option {
+    margin: 20px;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    display: inline-block;
+    width: 200px; /* Increased width */
+    background-color: #007bff;
+  }
+  .account-option a {
+    text-decoration: none;
+    color: #fff;
+  }
+  .btn-signup {
+    background-color: #007bff;
+  }
+  .btn-login {
+    background-color: #28a745;
+  }
+  .background-image {
+    background: url('{{ url_for('static', filename='images/nature4.jpg') }}') no-repeat center center fixed;
+    background-size: cover;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .quote {
+    font-size: 1.5em;
+    font-family: Verdana;
+    margin-top: 20px;
+    color: #333;
+  }
+</style>
+{% endblock %}
 {% block content %}
-<h2>My Account</h2>
-<h3>Upcoming Trips</h3>
-<ul class="list-group">
-  {% for trip in upcoming_trips %}
-  <li class="list-group-item">
-    <h5>{{ trip.tour.title }}</h5>
-    <p>{{ trip.date }}</p>
-  </li>
-  {% endfor %}
-</ul>
+<div class="background-image">
+  <div class="account-container">
+    <h2>Manage Your Account</h2>
+    <p>Please choose an option below:</p>
+    <div class="account-option btn-signup">
+      <a href="{{ url_for('user.register') }}">
+        <h3>Sign Up</h3>
+        <p>Create a new account</p>
+      </a>
+    </div>
+    <div class="account-option btn-login">
+      <a href="{{ url_for('user.login') }}">
+        <h3>Login</h3>
+        <p>Already have an account</p>
+      </a>
+    </div>
+    <div class="quote">
+      "Travel far enough, you meet yourself." - David Mitchell
+    </div>
+  </div>
+</div>
 {% endblock %}
