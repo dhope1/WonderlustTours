@@ -1,0 +1,35 @@
+{% extends 'admin/main.html' %}
+
+{% block content %}
+
+<div class="center">
+    <div class="form-container books-form">
+        <h3 class="books-form-header">Add A New Tour</h3>
+        <form method="post" action="{{ url_for('user.addTour') }}">
+            <div class="input-container">
+                <label class="input-label" for="books-title">Title: </label>
+                <input class="input" id="books-title" name="title" type="text" required />
+            </div>
+            <div class="input-container">
+                <label class="input-label" for="tour-description">Description: </label>
+                <textarea class="input" id="books-description" name="description" required></textarea>
+            </div>
+            <div class="input-container">
+                <label class="input-label" for="tour-price">Price: </label>
+                <input class="input" id="books-price" name="price" type="number" required />
+            </div>
+            <div class="input-container">
+                <label class="input-label" for="tour-location">Location: </label>
+                <input class="input" id="books-location" name="location" type="text" required />
+            </div>
+            <div class="input-container">
+                <label class="input-label" for="tour-image_filename">Image Filename: </label>
+                <input class="input" id="tour-image_filename" name="image_filename" type="text" required />
+            </div>
+            <button class="btn btn-primary">
+                Submit
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}

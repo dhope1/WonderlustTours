@@ -1,0 +1,64 @@
+{% extends 'admin/main.html' %}
+
+{% block content %}
+
+<h3>Welcome {{ request.user }}</h3>
+
+<div class="dashboard-card-container">
+    <div class="dashboard-card">
+        <h1>{{ total_tours }}</h1>
+        <p>Total Tour(s)</p>
+    </div>
+    <div class="dashboard-card">
+        <h1>{{ total_users }}</h1>
+        <p>Total User(s)</p>
+    </div>
+    <div class="dashboard-card">
+        <h1>{{ total_bookings }}</h1>
+        <p>Total Booking(s)</p>
+    </div>
+</div>
+<div class="">
+    <h3>All Tours</h3>
+    <a class="button-primary" href="{{ url_for('user.addTour') }}">Add A New Tour</a>
+
+    <table class="books-table-container">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th class="table-responsive">Location</th>
+                <th class="table-responsive">Price</th>
+                <th class="table-responsive">Description</th>
+                <th class="table-responsive">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for tour in tours %}
+            <tr>
+                <td>
+                    {{ tour.title }}
+                    <div class="table-show-mobile">
+                        Location: {{ tour.location }} <br>
+                        Price: {{ tour.price }} <br>
+                        Description: {{ tour.description }} <br>
+                        <div class="table-actions">
+                            <a href="" class="edit-button">Edit</a>
+                            <a href="" class="delete-button">Delete</a>
+                        </div>
+                    </div>
+                </td>
+                <td class="table-responsive">{{ tour.location }}</td>
+                <td class="table-responsive">{{ tour.price }}</td>
+                <td class="table-responsive">{{ tour.description }}</td>
+                <td class="table-actions table-responsive">
+                    <a href="" class="edit-button">Edit</a>
+                    <a href="" class="delete-button">Delete</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+</div>
+
+{% endblock%}
