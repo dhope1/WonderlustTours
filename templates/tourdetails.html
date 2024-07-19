@@ -1,29 +1,53 @@
 {% extends 'layout.html' %}
-{% block title %}{{ tour.title }} - Wonderlust Tours{% endblock %}
+{% block title %}Tour Details - Wonderlust Tours{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/tours.css') }}">
+{% endblock %}
+
 {% block content %}
-<div class="row">
-  <div class="col-md-8">
-    <img src="{{ tour.image_url }}" class="img-fluid" alt="{{ tour.title }}">
-    <h2>{{ tour.title }}</h2>
-    <p>{{ tour.description }}</p>
+<h2>Tour Details for {{ user['username'] }}</h2>
+<p><strong>Email:</strong> {{ user['email'] }}</p>
+
+<!-- <div class="slideshow-background">
+  <img src="{{ url_for('static', filename='images/china.jpg') }}" class="active">
+  <img src="{{ url_for('static', filename='images/swan.jpg') }}">
+  <img src="{{ url_for('static', filename='images/bread.jpg') }}">
+  <img src="{{ url_for('static', filename='images/starfish.jpg') }}">
+  <img src="{{ url_for('static', filename='images/tracks.jpg') }}">
+  <img src="{{ url_for('static', filename='images/journey.jpg') }}">
+</div> -->
+
+<h3>Your Bookings</h3>
+{% if bookings %}
+
+
+  <div id="tourList" class="row">
+    {% for booking in bookings %}
+    <div class="col-md-4">
+        <div class="card mb-4">
+
+            <img src="{{ url_for('static', filename='images/' ~ tour.image_filename) }}" class="card-img-top" alt="{{ tour.title }}">
+            <div class="card-body">
+                <h5 class="card-title"><strong>Titile : </strong>{{ booking.title }}</h5>
+                <p class="card-text"><strong>Price : </strong>{{ booking.price }}</p>
+                <p class="card-text"><strong>Location : </strong>{{ booking.location }}</p>
+                <p class="card-text"><strong>Status : </strong> {{ booking.status }}</p>
+                <p class="card-text"><strong>Date : </strong>{{ booking.date_of_booking }}</p>
+                {% if booking.status == 'pending' %}
+                  <a href="#" class="btn btn-warning">Pending</a>
+                {% elif booking.status == 'accepted' %}
+                  <a href="#" class="btn btn-success">Accepted</a>
+                {% elif booking.status == 'rejected' %}
+                  <a href="#" class="btn btn-danger">Denied</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endfor %}
   </div>
-  <div class="col-md-4">
-    <h3>Book this Tour</h3>
-    <form action="{{ url_for('routes.book', tour_id=tour.id) }}" method="post">
-      <div class="form-group">
-        <label for="name">Name</label>
-        <input type="text" class="form-control" id="name" name="name" required>
-      </div>
-      <div class="form-group">
-        <label for="email">Email</label>
-        <input type="email" class="form-control" id="email" name="email" required>
-      </div>
-      <div class="form-group">
-        <label for="date">Date</label>
-        <input type="date" class="form-control" id="date" name="date" required>
-      </div>
-      <button type="submit" class="btn btn-primary">Book Now</button>
-    </form>
-  </div>
-</div>
+
+{% else %}
+  <p>You have no bookings yet.</p>
+{% endif %}
 {% endblock %}
