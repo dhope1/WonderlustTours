@@ -2,10 +2,8 @@ from flask import Blueprint, render_template, request, redirect, url_for, sessio
 from werkzeug.security import generate_password_hash, check_password_hash
 
 import sqlite3
-import secrets
 
 routes = Blueprint('user', __name__)
-routes.secret_key = secrets.token_urlsafe(24)
 
 
 # Getting connection to database
@@ -33,8 +31,8 @@ def register():
                 VALUES (?, ?, ?, ?, ?, ?)
             ''', (username, email, first_name, last_name, phone_number, password))
             conn.commit()
-        
-        return redirect(url_for('index'))
+        flash('Siccess, registration successful, procced to login')
+        return redirect(url_for('user.login'))
     
     return render_template('register.html')
 
@@ -43,15 +41,20 @@ def register():
 @routes.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        username = request.form['username']
+        email = request.form['email']
         password = request.form['password']
         conn = get_db_connection()
-        user = conn.execute('SELECT * FROM users WHERE username = ?', (username,)).fetchone()
+        user = conn.execute('SELECT * FROM users WHERE email = ?', (email,)).fetchone()
         conn.close()
         if user and check_password_hash(user['password'], password):
             session['user_id'] = user['id']
             session['username'] = user['username']
-            return redirect(url_for('tours'))
+            if '@admin' in email:
+                flash('Success, welcome to the admin dashboard')
+                return redirect(url_for('user.dashboard'))
+            else:
+                flash('Success, welcome to the tours page')
+                return redirect(url_for('user.tours'))
         else:
             flash('Invalid credentials')
     return render_template('login.html')
@@ -62,7 +65,7 @@ def login():
 def logout():
     session.pop('user_id', None)
     session.pop('username', None)
-    return redirect(url_for('login'))
+    return redirect(url_for('user.login'))
 
 
 # Tours page with cards and booking option
@@ -75,28 +78,87 @@ def tours():
 
 
 # Booking logic for selected tour
-@routes.route('/book/<int:tour_id>')
+@routes.route('/book/<int:tour_id>', methods=['GET', 'POST'])
 def book(tour_id):
     if 'user_id' not in session:
         return redirect(url_for('user.login'))
     
     user_id = session['user_id']
+    
+    if request.method == 'POST':
+        tour_title = request.form['tour_title']
+        location = request.form['location']
+        price = request.form['price']
+        username = request.form['username']
+        email = request.form['email']
+        first_name = request.form['first_name']
+        last_name = request.form['last_name']
+        date_of_booking = request.form['date_of_booking']
+        
+        with sqlite3.connect('wonderlust_tours.db') as conn:
+            cur = conn.cursor()
+            # Fetch tour information
+            cur.execute("SELECT * FROM tours WHERE id = ?", (tour_id,))
+            tour = cur.fetchone()
+            # Retrieve user information
+            cur.execute("SELECT * FROM users WHERE id = ?", (user_id,))
+            user = cur.fetchone()
+            
+            if not tour:
+                return "Tour not found", 404
+            
+            cur.execute("INSERT INTO bookings (user_id, tour_id, status, title, location, price, username, email, first_name, last_name, date_of_booking) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                        (user_id, tour_id, 'pending', tour_title, location, price, username, email, first_name, last_name, date_of_booking))
+            conn.commit()
+            flash('Booking successful, proceed to check your booking status')
+        
+        return redirect(url_for('user.tour_details', tour_id=tour_id))
+    
     with sqlite3.connect('wonderlust_tours.db') as conn:
+        conn.row_factory = sqlite3.Row
         cur = conn.cursor()
+        cur.execute("SELECT * FROM tours WHERE id = ?", (tour_id,))
+        tour = cur.fetchone()
+        cur.execute("SELECT * FROM users WHERE id = ?", (user_id,))
+        user = cur.fetchone()
+    
+    return render_template('book.html', tour=tour, user=user)
+
+
+@routes.route('/tour_details/<int:tour_id>')
+def tour_details(tour_id):
+    if 'user_id' not in session:
+        return redirect(url_for('user.login'))
+    
+    user_id = session['user_id']
+    
+    with sqlite3.connect('wonderlust_tours.db') as conn:
+        conn.row_factory = sqlite3.Row  # This will return rows as dictionaries
+        cur = conn.cursor()
+        
         # Fetch tour information
         cur.execute("SELECT * FROM tours WHERE id = ?", (tour_id,))
         tour = cur.fetchone()
+        
         # Retrieve user information
         cur.execute("SELECT * FROM users WHERE id = ?", (user_id,))
         user = cur.fetchone()
-
-        if not tour:
-            return "Tour not found", 404
-        cur.execute("INSERT INTO booking (user_id, tour_id, status) VALUES (?, ?, ?)",
-                    (user_id, tour_id, 'pending'))
-        conn.commit()
+        
+        # Retrieve bookings made by the user
+        cur.execute("""
+            SELECT b.*, t.title, t.location, t.price
+            FROM bookings b
+            JOIN tours t ON b.tour_id = t.id
+            WHERE b.user_id = ?
+        """, (user_id,))
+        bookings = cur.fetchall()
     
-    return render_template('book.html', tour=tour, user=user)
+    return render_template('tourdetails.html', tour=tour, user=user, bookings=bookings)
+
+
+
+
+
 
 
 # My account 
@@ -118,12 +180,6 @@ def dashboard():
     total_bookings = conn.execute('SELECT COUNT(*) FROM bookings').fetchone()[0]
     conn.close()
 
-    context = {
-        'tours': tours,
-        'total_tours': total_tours,
-        'total_users' : total_users,
-        'total_bookings': total_bookings
-    }
     return render_template('admin/dashboard.html', tours=tours, total_tours=total_tours, total_users=total_users, total_bookings=total_bookings)
 
 # Adding tours
@@ -144,7 +200,7 @@ def addTour():
             ''', (title, description, price, location, image_filename))
             conn.commit()
         
-        # flash('Tour added successfully!', 'success')
+        flash('Tour added successfully!', 'success')
         return redirect(url_for('user.dashboard'))
     
     return render_template('admin/create_tours_form.html')
