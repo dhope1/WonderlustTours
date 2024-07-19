@@ -38,10 +38,9 @@ def register():
     
     return render_template('register.html')
 
-<<<<<<< HEAD
 
-=======
->>>>>>> dc7c36912a0b94b5ea573c1a6106ec92c30eae25
+
+
 
 # Login for user or admin
 @routes.route('/login', methods=['GET', 'POST'])
@@ -102,17 +101,10 @@ def book(tour_id):
     
     return render_template('book.html', tour=tour, user=user)
 
-
 # My account 
 @routes.route('/account')
 def account():
     return render_template('account.html')
-
-<<<<<<< HEAD
-=======
-
-
-
 
 # Routes for the admin 
 @routes.route('/admin/dashboard')
@@ -154,4 +146,4 @@ def addTour():
         return redirect(url_for('user.dashboard'))
     
     return render_template('admin/create_tours_form.html')
->>>>>>> dc7c36912a0b94b5ea573c1a6106ec92c30eae25
+

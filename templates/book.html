@@ -1,20 +1,35 @@
-{% extends 'layout.html' %}
+{% extends 'base.html' %}
 {% block title %}Book Tour - Wonderlust Tours{% endblock %}
 {% block content %}
-<h2>Book {{ tour.title }}</h2>
-<form action="{{ url_for('routes.book', tour_id=tour.id) }}" method="post">
-  <div class="form-group">
-    <label for="name">Name</label>
-    <input type="text" class="form-control" id="name" name="name" required>
-  </div>
-  <div class="form-group">
-    <label for="email">Email</label>
-    <input type="email" class="form-control" id="email" name="email" required>
-  </div>
-  <div class="form-group">
-    <label for="date">Date</label>
-    <input type="date" class="form-control" id="date" name="date" required>
-  </div>
-  <button type="submit" class="btn btn-primary">Book Now</button>
-</form>
+<div class="background-image"></div>
+<div class="form-container">
+  <h2>Book {{ tour.title }}</h2>
+  <form action="{{ url_for('routes.book', tour_id=tour.id) }}" method="post">
+    <div class="form-group">
+      <label for="name">Name</label>
+      <input type="text" class="form-control" id="name" name="name" required>
+    </div>
+    <div class="form-group">
+      <label for="email">Email</label>
+      <input type="email" class="form-control" id="email" name="email" required>
+    </div>
+    <div class="form-group">
+      <label for="date">Date</label>
+      <input type="date" class="form-control" id="date" name="date" required>
+    </div>
+    <div class="form-group">
+      <label for="participants">Number of Participants</label>
+      <input type="number" class="form-control" id="participants" name="participants" min="1" required>
+    </div>
+    <div class="form-group">
+      <label for="extras">Optional Extras</label>
+      <select class="form-control" id="extras" name="extras">
+        <option value="none">None</option>
+        <option value="guided_tour">Guided Tour</option>
+        <option value="extra_activities">Additional Activities</option>
+      </select>
+    </div>
+    <button type="submit" class="btn btn-primary">Book Now</button>
+  </form>
+</div>
 {% endblock %}
