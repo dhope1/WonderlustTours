@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, redirect, url_for, session, flash
+from flask import Blueprint, render_template, request, redirect, url_for, session, flash, jsonify
 from werkzeug.security import generate_password_hash, check_password_hash
 
 import sqlite3
@@ -7,13 +7,18 @@ import secrets
 routes = Blueprint('user', __name__)
 routes.secret_key = secrets.token_urlsafe(24)
 
-
 # Getting connection to database
 def get_db_connection():
     conn = sqlite3.connect('wonderlust_tours.db')
     conn.row_factory = sqlite3.Row
     return conn
 
+# Function to fetch tours from the database
+def get_tours_from_db():
+    conn = get_db_connection()
+    tours = conn.execute('SELECT id, title, description, price, location, image_filename FROM tours').fetchall()
+    conn.close()
+    return tours
 
 # Registering user or admin
 @routes.route('/register', methods=['GET', 'POST'])
@@ -38,10 +43,6 @@ def register():
     
     return render_template('register.html')
 
-
-
-
-
 # Login for user or admin
 @routes.route('/login', methods=['GET', 'POST'])
 def login():
@@ -59,7 +60,6 @@ def login():
             flash('Invalid credentials')
     return render_template('login.html')
 
-
 # Logout user or admin
 @routes.route('/logout')
 def logout():
@@ -67,15 +67,28 @@ def logout():
     session.pop('username', None)
     return redirect(url_for('login'))
 
-
 # Tours page with cards and booking option
 @routes.route('/tours')
 def tours():
-    conn = get_db_connection()
-    tours = conn.execute('SELECT * FROM tours').fetchall()
-    conn.close()
+    tours = get_tours_from_db()
     return render_template('tours.html', tours=tours)
 
+# API endpoint to fetch tours
+@routes.route('/api/tours', methods=['GET'])
+def get_tours():
+    tours = get_tours_from_db()
+    tour_list = [
+        {
+            'id': tour['id'],
+            'title': tour['title'],
+            'description': tour['description'],
+            'price': tour['price'],
+            'location': tour['location'],
+            'image_filename': tour['image_filename']
+        }
+        for tour in tours
+    ]
+    return jsonify(tour_list)
 
 # Booking logic for selected tour
 @routes.route('/book/<int:tour_id>')
@@ -146,4 +159,3 @@ def addTour():
         return redirect(url_for('user.dashboard'))
     
     return render_template('admin/create_tours_form.html')
-
