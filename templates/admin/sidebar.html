@@ -1,0 +1,32 @@
+
+
+
+<nav class="sidebar sidebar-responsive">
+    <div class="sidebar-link-container sidebar-link-home">
+        <a href="{{ url_for('user.dashboard') }}" class="sidebar-link">
+            <img class="sidebar-image" alt="home" src="{{ url_for('static', filename='images/home.png') }}" />
+        </a>
+        <span class="sidebar-tooltip-home tooltip">Home</span>
+    </div>
+
+    <div class="sidebar-link-container sidebar-link-books">
+        <a href="" class="sidebar-link">
+            <img class="sidebar-image" alt="books" src="" />
+        </a>
+        <span class="sidebar-tooltip-books tooltip">Book Requests</span>
+    </div>
+
+    <div class="sidebar-link-container sidebar-link-fines">
+        <a class="sidebar-link" href="">
+            <img class="sidebar-image" alt="fines" src="" />
+        </a>
+        <span class="tooltip sidebar-tooltip-fines">Users</span>
+    </div>
+
+    <div class="sidebar-link-container sidebar-link-logout">
+        <a class="sidebar-link" href="{{ url_for('user.logout') }}">
+            <img class="sidebar-image" alt="logout" src="{{ url_for('static', filename='images/logout.png') }}" />
+        </a>
+        <span class="tooltip sidebar-tooltip-logout">Logout</span>
+    </div>
+</nav>
