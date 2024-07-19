@@ -103,3 +103,48 @@ def book(tour_id):
 @routes.route('/account')
 def account():
     return render_template('account.html')
+
+
+
+
+
+# Routes for the admin 
+@routes.route('/admin/dashboard')
+def dashboard():
+    conn = get_db_connection()
+    tours = conn.execute('SELECT * FROM tours').fetchall()
+    total_tours = len(tours)
+    total_users = conn.execute('SELECT COUNT(*) FROM users').fetchone()[0]
+    total_bookings = conn.execute('SELECT COUNT(*) FROM bookings').fetchone()[0]
+    conn.close()
+
+    context = {
+        'tours': tours,
+        'total_tours': total_tours,
+        'total_users' : total_users,
+        'total_bookings': total_bookings
+    }
+    return render_template('admin/dashboard.html', tours=tours, total_tours=total_tours, total_users=total_users, total_bookings=total_bookings)
+
+# Adding tours
+@routes.route('/admin/add_tour', methods=['GET', 'POST'])
+def addTour():
+    if request.method == 'POST':
+        title = request.form['title']
+        description = request.form['description']
+        price = request.form['price']
+        location = request.form['location']
+        image_filename = request.form['image_filename']
+        
+        with sqlite3.connect('wonderlust_tours.db') as conn:
+            cur = conn.cursor()
+            cur.execute('''
+                INSERT INTO tours (title, description, price, location, image_filename) 
+                VALUES (?, ?, ?, ?, ?)
+            ''', (title, description, price, location, image_filename))
+            conn.commit()
+        
+        # flash('Tour added successfully!', 'success')
+        return redirect(url_for('user.dashboard'))
+    
+    return render_template('admin/create_tours_form.html')
