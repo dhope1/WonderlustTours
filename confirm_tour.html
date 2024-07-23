@@ -1,0 +1,38 @@
+{% extends 'admin/main.html' %}
+{% block content %}
+
+<div class="center">
+    <div class="form-container books-form">
+        <h3 class="books-form-header">Confirm Booking</h3>
+        <form method="post" action="">
+
+            <div class="input-containter">
+                <label class="input-label" for="title">Title: </label>
+                <input readonly value="{{ booking.title }}" class="input" id="title" name="title"
+                    type="text" />
+            </div>
+            <div class="input-containter">
+                <label class="input-label" for="username">Username: </label>
+                <input readonly value="{{ booking.username }}" class="input" id="username" name="username"
+                    type="text" />
+            </div>
+            <div class="input-containter">
+                <label class="input-label" for="location">Location: </label>
+                <input readonly value="{{ booking.location }}" class="input" id="location" name="location"
+                    type="text" />
+            </div>
+            <div class="input-containter">
+                <label class="input-label" for="price">Price: </label>
+                <input readonly value="{{ booking.price }}" class="input" id="price" name="price"
+                    type="text" />
+            </div>
+
+            <button type="submit" class="submit-button">
+                Submit
+            </button>
+        </form>
+    </div>
+</div>
+
+
+{% endblock %}
