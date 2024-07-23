@@ -171,14 +171,11 @@ def tour_details(tour_id):
     
     return render_template('tourdetails.html', tour=tour, user=user, bookings=bookings)
 
-<<<<<<< HEAD
-=======
 
 
 
 
 
->>>>>>> ab3f4fb337dcef03b460a844f301e2a08345d58a
 # My account 
 @routes.route('/account')
 def account():
@@ -218,7 +215,7 @@ def addTour():
         return redirect(url_for('user.dashboard'))
     
     return render_template('admin/create_tours_form.html')
-<<<<<<< HEAD
+
 
 
 @routes.route('/admin/tours/edit/<int:tour_id>', methods=['GET'])
@@ -374,5 +371,3 @@ def deny_booking(booking_id):
     }
 
     return render_template('admin/deny_tour.html', booking=booking_dict)
-=======
->>>>>>> ab3f4fb337dcef03b460a844f301e2a08345d58a
