@@ -1,51 +1,78 @@
-{% extends 'layout.html' %}
-{% block title %}Book Tour - Wonderlust Tours{% endblock %}
-{% block content %}
-<h2>You are proceeding to book {{ tour.title }}</h2><hr>
-<form action="{{ url_for('user.book', tour_id=tour.id) }}" method="post">
-  <h3>Tour details</h3>
-  <div class="form-group">
-    <label for="tour_title">Title</label>
-    <input value="{{ tour.title }}" type="text" class="form-control" id="tour_title" name="tour_title" readonly>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Book Tour - Wonderlust Tours</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/book.css') }}">
+</head>
+<body>
+  <div class="background-image"></div>
+  <div class="overlay"></div>
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="#">Wonderlust Tours</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ml-auto">
+        <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('index') }}">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('user.tours') }}">Tours</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('user.account') }}">Account</a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+  <div class="form-container">
+    <h2>You are proceeding to book {{ tour.title }}</h2>
+    <hr>
+    <form action="{{ url_for('user.book', tour_id=tour.id) }}" method="post">
+      <h3>Tour details</h3>
+      <div class="form-group">
+        <label for="tour_title">Title</label>
+        <input value="{{ tour.title }}" type="text" class="form-control" id="tour_title" name="tour_title" readonly>
+      </div>
+      <div class="form-group">
+        <label for="location">Location</label>
+        <input value="{{ tour.location }}" type="text" class="form-control" id="location" name="location" readonly>
+      </div>
+      <div class="form-group">
+        <label for="price">Price</label>
+        <input value="{{ tour.price }}" type="text" class="form-control" id="price" name="price" readonly>
+      </div>
+      <hr><br>
+      <h3>User Details</h3>
+      <div class="form-group">
+        <label for="username">Username</label>
+        <input value="{{ user.username }}" type="text" class="form-control" id="username" name="username" readonly>
+      </div>
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input value="{{ user.email }}" type="email" class="form-control" id="email" name="email" readonly>
+      </div>
+      <div class="form-group">
+        <label for="first_name">First Name</label>
+        <input value="{{ user.first_name }}" type="text" class="form-control" id="first_name" name="first_name" readonly>
+      </div>
+      <div class="form-group">
+        <label for="last_name">Last Name</label>
+        <input value="{{ user.last_name }}" type="text" class="form-control" id="last_name" name="last_name" readonly>
+      </div>
+      <div class="form-group">
+        <label for="date_of_booking">Date of Booking</label>
+        <input type="date" class="form-control" id="date_of_booking" name="date_of_booking" required>
+      </div>
+      <button type="submit" class="btn btn-primary">Book Now</button>
+    </form>
   </div>
-
-  <div class="form-group">
-    <label for="location">Location</label>
-    <input value="{{ tour.location }}" type="text" class="form-control" id="location" name="location" readonly>
-  </div>
-
-  <div class="form-group">
-    <label for="price">Price</label>
-    <input value="{{ tour.price }}" type="text" class="form-control" id="price" name="price" readonly>
-  </div><hr><br>
-
-  <h3>User Details</h3>
-  <div class="form-group">
-    <label for="username">Username</label>
-    <input value="{{ user.username }}" type="text" class="form-control" id="username" name="username" readonly>
-  </div>
-
-  <div class="form-group">
-    <label for="email">Email</label>
-    <input value="{{ user.email }}" type="email" class="form-control" id="email" name="email" readonly>
-  </div>
-
-  <div class="form-group">
-    <label for="first_name">First Name</label>
-    <input value="{{ user.first_name }}" type="text" class="form-control" id="first_name" name="first_name" readonly>
-  </div>
-
-  <div class="form-group">
-    <label for="last_name">Last Name</label>
-    <input value="{{ user.last_name }}" type="text" class="form-control" id="last_name" name="last_name" readonly>
-  </div>
-
-  <div class="form-group">
-    <label for="date_of_booking">Date of Booking</label>
-    <input type="date" class="form-control" id="date_of_booking" name="date_of_booking" required>
-  </div>
-
-  <button type="submit" class="btn btn-primary">Book Now</button>
-
-</form>
-{% endblock %}
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

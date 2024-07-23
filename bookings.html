@@ -1,0 +1,115 @@
+{% extends 'admin/main.html' %}
+
+{% block content %}
+
+<h3>Bookings Made</h3>
+
+<div class="dashboard-card-container">
+    <div class="dashboard-card">
+        <h1>{{ total_booking_count }}</h1>
+        <p>Booking request(s)</p>
+    </div>
+    <div class="dashboard-card">
+        <h1>{{ confirmed_count }}</h1>
+        <p>Accepted Tour(s)</p>
+    </div>
+    <div class="dashboard-card">
+        <h1>{{ total_pending }}</h1>
+        <p>Pending</p>
+    </div>
+</div>
+
+
+<div>
+    <div class="table-header">
+        <h4 class="table-title">Pending Requests</h4>
+    </div>
+    <table class="books-table-container">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Username</th>
+                <th>Booking Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for booking in pending_requests %}
+            <tr>
+                <td>{{ booking.title }}</td>
+                <td>{{ booking.username}}</td>
+                <td>{{ booking.status }}</td>
+                <td class="table-actions">
+                    <a href="{{ url_for('user.confirm_booking', booking_id=booking.id) }}" class="confirm-button">Confirm</a>
+                    <a href="{{ url_for('user.deny_booking', booking_id=booking.id) }}" class="deny-button">Deny</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+
+<div>
+    <div class="table-header">
+        <h4 class="table-title">Accepted Requests</h4>
+    </div>
+    <table class="books-table-container">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Username</th>
+                <th>Date</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for booking in confirmed %}
+            <tr>
+                <td>{{ booking.title }}</td>
+                <td>{{ booking.username}}</td>
+                <td>{{ booking.date_of_booking }}</td>
+                <td>{{ booking.status }}</td>
+                <td class="table-actions">
+                    <form method="post" action="#">
+                        <button type="submit" class="confirm-button">Confirmed</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+
+
+<div>
+    <div class="table-header">
+        <h4 class="table-title">All Requests</h4>
+    </div>
+    <table class="books-table-container">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Username</th>
+                <th>Status</th>
+                <th>Date Borrowed</th>
+                <th>Return Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for all_requests in all_requests %}
+            <tr>
+                <td>{{ all_requests.title }}</td>
+                <td>{{ all_requests.username }}</td>
+                <td>{{ all_requests.status }}</td>
+                <td>{{ all_requests.date_of_booking }}</td>
+                <td>{{ all_requests.email }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+
+{% endblock %}
