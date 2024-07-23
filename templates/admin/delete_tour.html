@@ -1,0 +1,17 @@
+{% extends 'admin/main.html' %}
+
+{% block content %}
+
+<div class="center">
+    <div class="books-form delete-form-container">
+        <h3>Are you sure you want to delete {{ tour.title }} ? </h3>
+        <form method="POST" action="{{ url_for('user.delete_tour', tour_id=tour['id']) }}">
+            <div class="delete-button-container">
+                <a href="{{ url_for('user.dashboard') }}" class="edit-button">Go Back</a>
+                <button class="delete-button">Delete Tour</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}
