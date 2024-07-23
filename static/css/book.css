@@ -1,0 +1,58 @@
+body, html {
+  height: 100%;
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.background-image {
+  background-image: url('../images/luggage.jpg');
+  height: 100%;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  position: fixed;
+  width: 100%;
+  z-index: -1;
+}
+
+.overlay {
+  background-color: rgba(0, 0, 0, 0);
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  z-index: -1;
+}
+
+.form-container {
+  position: relative;
+  background-color: rgba(42, 42, 41, 0.5);
+  border-radius: 10px;
+  padding: 30px;
+  margin: 50px auto;
+  width: 60%;
+  color: #fff;
+}
+
+.form-group label {
+  font-weight: bold;
+  color: #fff;
+}
+
+.form-control {
+  background-color: rgba(113, 107, 107, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #0b0000;
+}
+
+.form-control:focus {
+  background-color: rgba(41, 40, 40, 0.3);
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.7);
+}
+
+.btn-primary {
+  background-color: palevioletred;
+  border: none;
+}
