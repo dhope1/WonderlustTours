@@ -215,3 +215,159 @@ def addTour():
         return redirect(url_for('user.dashboard'))
     
     return render_template('admin/create_tours_form.html')
+
+
+
+@routes.route('/admin/tours/edit/<int:tour_id>', methods=['GET'])
+def edit_tour(tour_id):
+
+    with sqlite3.connect('wonderlust_tours.db') as conn:
+        conn.row_factory = sqlite3.Row
+        cur = conn.cursor()
+        cur.execute("SELECT * FROM tours WHERE id = ?", (tour_id,))
+        tour = cur.fetchone()
+
+    if not tour:
+        return "Tour not found", 404
+
+    return render_template('admin/edit_tours.html', tour=tour)
+
+
+@routes.route('/admin/tours/edit/<int:tour_id>', methods=['POST'])
+def update_tour(tour_id):
+    title = request.form['title']
+    location = request.form['location']
+    price = request.form['price']
+    description = request.form['description']
+
+    with sqlite3.connect('wonderlust_tours.db') as conn:
+        cur = conn.cursor()
+        cur.execute("""
+            UPDATE tours
+            SET title = ?, location = ?, price = ?, description = ?
+            WHERE id = ?
+        """, (title, location, price, description, tour_id))
+        conn.commit()
+
+    flash('Tour updated successfully')
+    return redirect(url_for('user.dashboard'))
+
+
+@routes.route('/admin/tours/delete/<int:tour_id>', methods=['GET', 'POST'])
+def delete_tour(tour_id):
+
+    if request.method == 'POST':
+        with sqlite3.connect('wonderlust_tours.db') as conn:
+            cur = conn.cursor()
+            cur.execute("DELETE FROM tours WHERE id = ?", (tour_id,))
+            conn.commit()
+            flash('Tour deleted successfully')
+        return redirect(url_for('user.dashboard'))
+
+    with sqlite3.connect('wonderlust_tours.db') as conn:
+        conn.row_factory = sqlite3.Row
+        cur = conn.cursor()
+        cur.execute("SELECT * FROM tours WHERE id = ?", (tour_id,))
+        tour = cur.fetchone()
+
+    if not tour:
+        return "Tour not found", 404
+
+    return render_template('admin/delete_tour.html', tour=tour)
+
+# Routes for booking page
+@routes.route('/admin/bookings')
+def bookings():
+    with sqlite3.connect('wonderlust_tours.db') as conn:
+        conn.row_factory = sqlite3.Row
+        cur = conn.cursor()
+
+        # Count total bookings, accepted bookings, and pending bookings
+        cur.execute("SELECT COUNT(*) FROM bookings")
+        total_booking_count = cur.fetchone()[0]
+
+        cur.execute("SELECT COUNT(*) FROM bookings WHERE status = 'accepted'")
+        confirmed_count = cur.fetchone()[0]
+
+        cur.execute("SELECT COUNT(*) FROM bookings WHERE status = 'pending'")
+        total_pending = cur.fetchone()[0]
+
+        # Fetch all bookings
+        cur.execute("SELECT * FROM bookings")
+        bookings = cur.fetchall()
+
+        # Fetch pending requests
+        cur.execute("SELECT * FROM bookings WHERE status = 'pending'")
+        pending_requests = cur.fetchall()
+
+        # Fetch accepted requests
+        cur.execute("SELECT * FROM bookings WHERE status = 'accepted'")
+        confirmed = cur.fetchall()
+
+        # Fetch all requests
+        cur.execute("SELECT * FROM bookings")
+        all_requests = cur.fetchall()
+
+    
+    return render_template('admin/bookings.html', confirmed_count=confirmed_count, pending_requests=pending_requests, confirmed=confirmed, all_requests=all_requests, total_booking_count=total_booking_count,  total_pending=total_pending)
+
+
+
+@routes.route('/admin/confirm_booking/<int:booking_id>', methods=['GET', 'POST'])
+def confirm_booking(booking_id):
+    if request.method == 'POST':
+        # Handle form submission to confirm the booking
+        with sqlite3.connect('wonderlust_tours.db') as conn:
+            cur = conn.cursor()
+            cur.execute("UPDATE bookings SET status = 'accepted' WHERE id = ?", (booking_id,))
+            conn.commit()
+            flash('Booking confirmed successfully.')
+            return redirect(url_for('user.bookings'))
+
+    # Retrieve booking details to display in the form
+    with sqlite3.connect('wonderlust_tours.db') as conn:
+        cur = conn.cursor()
+        cur.execute("SELECT * FROM bookings WHERE id = ?", (booking_id,))
+        booking = cur.fetchone()
+
+    if not booking:
+        flash('Booking not found.')
+        return redirect(url_for('bookings'))
+
+    booking_dict = {
+        'id': booking[0],
+        'title': booking[3],
+        'username': booking[6],
+        'location': booking[4],
+        'price': booking[5],
+    }
+
+    return render_template('admin/confirm_tour.html', booking=booking_dict)
+
+
+@routes.route('/admin/deny_tour/<int:booking_id>', methods=['GET', 'POST'])
+def deny_booking(booking_id):
+    if request.method == 'POST':
+        with sqlite3.connect('wonderlust_tours.db') as conn:
+            cur = conn.cursor()
+            cur.execute("UPDATE bookings SET status = 'denied' WHERE id = ?", (booking_id,))
+            conn.commit()
+            flash('Tour request denied successfully.')
+            return redirect(url_for('user.bookings'))
+
+    with sqlite3.connect('wonderlust_tours.db') as conn:
+        cur = conn.cursor()
+        cur.execute("SELECT * FROM bookings WHERE id = ?", (booking_id,))
+        booking = cur.fetchone()
+
+    if not booking:
+        flash('Booking not found.')
+        return redirect(url_for('user.bookings'))
+
+    booking_dict = {
+        'id': booking[0],
+        'title': booking[1],
+        'username' : booking[7]
+    }
+
+    return render_template('admin/deny_tour.html', booking=booking_dict)
