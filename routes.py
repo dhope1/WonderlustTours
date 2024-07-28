@@ -1,9 +1,21 @@
 from flask import Blueprint, render_template, request, redirect, url_for, session, flash, jsonify
 from werkzeug.security import generate_password_hash, check_password_hash
+from flask_mail import Mail, Message
+from config import mail
+from reportlab.lib.pagesizes import letter
+from reportlab.pdfgen import canvas
+from reportlab.lib.utils import ImageReader
+from reportlab.lib import colors
+from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer, Image
+from flask import url_for
 
+import io
+import os
 import sqlite3
 
 routes = Blueprint('user', __name__)
+
 
 # Getting connection to database
 def get_db_connection():
@@ -36,7 +48,7 @@ def register():
                 VALUES (?, ?, ?, ?, ?, ?)
             ''', (username, email, first_name, last_name, phone_number, password))
             conn.commit()
-        flash('Siccess, registration successful, procced to login')
+        flash('Success, registration successful, procced to login', 'success')
         return redirect(url_for('user.login'))
     
     return render_template('register.html')
@@ -57,7 +69,7 @@ def login():
                 flash('Success, welcome to the admin dashboard')
                 return redirect(url_for('user.dashboard'))
             else:
-                flash('Success, welcome to the tours page')
+                flash('Success, welcome to the tours page', 'success')
                 return redirect(url_for('user.tours'))
         else:
             flash('Invalid credentials')
@@ -97,6 +109,7 @@ def get_tours():
 @routes.route('/book/<int:tour_id>', methods=['GET', 'POST'])
 def book(tour_id):
     if 'user_id' not in session:
+        flash('Please log in to book a tour.', 'warning')
         return redirect(url_for('user.login'))
     
     user_id = session['user_id']
@@ -126,8 +139,73 @@ def book(tour_id):
             cur.execute("INSERT INTO bookings (user_id, tour_id, status, title, location, price, username, email, first_name, last_name, date_of_booking) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                         (user_id, tour_id, 'pending', tour_title, location, price, username, email, first_name, last_name, date_of_booking))
             conn.commit()
-            flash('Booking successful, proceed to check your booking status')
-        
+            flash('Booking successful, proceed to check your booking status', 'success')
+
+            # Send email
+            msg = Message("Wonderlust Tours Booking", recipients=[email])
+            msg.html = f"""
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <style>
+                    body {{
+                        font-family: Arial, sans-serif;
+                        line-height: 1.6;
+                    }}
+                    .header {{
+                        background-color: #ffebcc;
+                        padding: 10px;
+                        text-align: center;
+                        border-bottom: 2px solid #ffa500;
+                    }}
+                    .content {{
+                        margin: 20px;
+                    }}
+                    .details {{
+                        background-color: #f9f9f9;
+                        padding: 15px;
+                        border: 1px solid #ddd;
+                    }}
+                    .footer {{
+                        margin-top: 20px;
+                        font-size: 0.9em;
+                        color: #888;
+                    }}
+                </style>
+            </head>
+            <body>
+                <div class="header">
+                    <img src="cid:logo" style="max-width: 200px;" alt="Wonderlust Tours Logo" />
+                    <h2>Booking Pending</h2>
+                </div>
+                <div class="content">
+                    <h3>Dear {first_name} {last_name},</h3>
+                    <p>Thank you for booking with us! You have successfully booked the tour '<strong>{tour_title}</strong>' at <strong>{location}</strong> on <strong>{date_of_booking}</strong>.</p>
+                    <div class="details">
+                        <p><strong>Tour Details:</strong></p>
+                        <ul>
+                            <li>Tour name: <strong>{tour_title}</strong></li>
+                            <li><strong>Price:</strong> {price}</li>
+                            <li><strong>Location:</strong> {location}</li>
+                            <li><strong>Date:</strong> {date_of_booking}</li>
+                            <li><strong>Booking status:</strong> Pending</li>
+                        </ul>
+                    </div>
+                    <p>If you have any questions, please don't hesitate to contact us.</p>
+                    <p>We look forward to welcoming you!</p>
+                    <div class="footer">
+                        <h4>Best regards,</h4>
+                        <h1>Wonderlust Tours</h1>
+                    </div>
+                </div>
+            </body>
+            </html>
+            """
+            with routes.open_resource("static/images/logo.jpg") as logo:
+                msg.attach("logo.jpg", "image/jpeg", logo.read(), 'inline', headers={'Content-ID': '<logo>'})
+            mail.send(msg)
+            flash('Kindly check your email for further details', 'info')
+
         return redirect(url_for('user.tour_details', tour_id=tour_id))
     
     with sqlite3.connect('wonderlust_tours.db') as conn:
@@ -149,7 +227,7 @@ def tour_details(tour_id):
     user_id = session['user_id']
     
     with sqlite3.connect('wonderlust_tours.db') as conn:
-        conn.row_factory = sqlite3.Row  # This will return rows as dictionaries
+        conn.row_factory = sqlite3.Row
         cur = conn.cursor()
         
         # Fetch tour information
@@ -172,16 +250,22 @@ def tour_details(tour_id):
     return render_template('tourdetails.html', tour=tour, user=user, bookings=bookings)
 
 
-
-
-
-
 # My account 
 @routes.route('/account')
 def account():
     return render_template('account.html')
 
-# Routes for the admin 
+
+
+
+#################################
+
+# Routes for the admin start here
+
+# ################################
+
+
+# Admin dashboard routes
 @routes.route('/admin/dashboard')
 def dashboard():
     conn = get_db_connection()
@@ -192,6 +276,7 @@ def dashboard():
     conn.close()
 
     return render_template('admin/dashboard.html', tours=tours, total_tours=total_tours, total_users=total_users, total_bookings=total_bookings)
+
 
 # Adding tours
 @routes.route('/admin/add_tour', methods=['GET', 'POST'])
@@ -217,7 +302,7 @@ def addTour():
     return render_template('admin/create_tours_form.html')
 
 
-
+# Routes for accessing edit tour page
 @routes.route('/admin/tours/edit/<int:tour_id>', methods=['GET'])
 def edit_tour(tour_id):
 
@@ -233,6 +318,7 @@ def edit_tour(tour_id):
     return render_template('admin/edit_tours.html', tour=tour)
 
 
+# Routes for updating/editing tour
 @routes.route('/admin/tours/edit/<int:tour_id>', methods=['POST'])
 def update_tour(tour_id):
     title = request.form['title']
@@ -252,7 +338,7 @@ def update_tour(tour_id):
     flash('Tour updated successfully')
     return redirect(url_for('user.dashboard'))
 
-
+# Routes for deleting tour
 @routes.route('/admin/tours/delete/<int:tour_id>', methods=['GET', 'POST'])
 def delete_tour(tour_id):
 
@@ -313,18 +399,98 @@ def bookings():
 
 
 
+# Routes for cofirming a booking
 @routes.route('/admin/confirm_booking/<int:booking_id>', methods=['GET', 'POST'])
 def confirm_booking(booking_id):
     if request.method == 'POST':
-        # Handle form submission to confirm the booking
         with sqlite3.connect('wonderlust_tours.db') as conn:
             cur = conn.cursor()
             cur.execute("UPDATE bookings SET status = 'accepted' WHERE id = ?", (booking_id,))
             conn.commit()
-            flash('Booking confirmed successfully.')
+
+            cur.execute("SELECT * FROM bookings WHERE id = ?", (booking_id,))
+            booking = cur.fetchone()
+
+            if booking:
+                email = booking[8]
+                first_name = booking[9]
+                last_name = booking[10]
+                tour_title = booking[4]
+                location = booking[5]
+                price = float(booking[6]) 
+                date_of_booking = booking[11]
+
+                # Generate PDF receipt
+                buffer = io.BytesIO()
+                doc = SimpleDocTemplate(buffer, pagesize=letter)
+                elements = []
+
+                # Add logo and header
+                logo_path = 'static/images/logo.jpg'
+                try:
+                    logo = Image(logo_path, width=100, height=100)
+                    elements.append(logo)
+                except Exception as e:
+                    print(f"Error loading logo: {e}")
+
+                elements.append(Spacer(1, 12))
+                elements.append(Paragraph("<b>Wonderlust Tours</b>", getSampleStyleSheet()['Title']))
+                elements.append(Spacer(1, 12))
+                elements.append(Paragraph(f"<b>Booking Confirmation Receipt</b>", getSampleStyleSheet()['Heading2']))
+                elements.append(Spacer(1, 24))
+
+                # Add booking details
+                details = [
+                    ("Booking ID:", booking_id),
+                    ("Tour:", tour_title),
+                    ("Location:", location),
+                    ("Date:", date_of_booking),
+                    ("Price:", f"${price:.2f}")
+                ]
+                for label, value in details:
+                    elements.append(Paragraph(f"<b>{label}</b> {value}", getSampleStyleSheet()['BodyText']))
+                    elements.append(Spacer(1, 12))
+
+                elements.append(Spacer(1, 24))
+
+                # Add pricing table
+                table_data = [
+                    ["Description", "Amount"],
+                    [tour_title, f"${price:.2f}"],
+                    ["Total", f"${price:.2f}"]
+                ]
+                table = Table(table_data, colWidths=[200, 100])
+                table.setStyle(TableStyle([
+                    ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
+                    ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+                    ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+                    ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+                    ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+                    ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
+                    ('GRID', (0, 0), (-1, -1), 1, colors.black),
+                ]))
+                elements.append(table)
+
+                elements.append(Spacer(1, 48))
+
+                # Footer
+                elements.append(Paragraph("Thank you for your booking!", getSampleStyleSheet()['BodyText']))
+                elements.append(Paragraph("Contact us: contact@wonderlusttours.com", getSampleStyleSheet()['BodyText']))
+
+                doc.build(elements)
+
+                buffer.seek(0)
+                pdf_data = buffer.getvalue()
+                buffer.close()
+
+                msg = Message("Booking Confirmation and Receipt", recipients=[email])
+                msg.body = f"Dear {first_name} {last_name},\n\nYour booking for '{tour_title}' at '{location}' has been confirmed.\n\nPlease find your receipt attached.\n\nThank you!"
+                msg.attach(f"receipt_{booking_id}.pdf", "application/pdf", pdf_data)
+                mail.send(msg)
+
+            flash('Booking confirmed successfully. Confirmation email sent.')
             return redirect(url_for('user.bookings'))
 
-    # Retrieve booking details to display in the form
     with sqlite3.connect('wonderlust_tours.db') as conn:
         cur = conn.cursor()
         cur.execute("SELECT * FROM bookings WHERE id = ?", (booking_id,))
@@ -345,6 +511,7 @@ def confirm_booking(booking_id):
     return render_template('admin/confirm_tour.html', booking=booking_dict)
 
 
+# Routes for denying booking
 @routes.route('/admin/deny_tour/<int:booking_id>', methods=['GET', 'POST'])
 def deny_booking(booking_id):
     if request.method == 'POST':
@@ -352,7 +519,83 @@ def deny_booking(booking_id):
             cur = conn.cursor()
             cur.execute("UPDATE bookings SET status = 'denied' WHERE id = ?", (booking_id,))
             conn.commit()
-            flash('Tour request denied successfully.')
+
+            # Fetch booking details to include in the email
+            cur.execute("SELECT * FROM bookings WHERE id = ?", (booking_id,))
+            booking = cur.fetchone()
+
+            if booking:
+                email = booking[8]
+                first_name = booking[9]
+                last_name = booking[10]
+                tour_title = booking[4]
+                location = booking[5]
+                date_of_booking = booking[11]
+
+                # Send rejection email with logo
+                msg = Message("Wonderlust Tours Booking Rejected", recipients=[email])
+                msg.html = f"""
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <style>
+                        body {{
+                            font-family: Arial, sans-serif;
+                            line-height: 1.6;
+                        }}
+                        .header {{
+                            background-color: #ffcccc;
+                            padding: 10px;
+                            text-align: center;
+                            border-bottom: 2px solid #dd0000;
+                        }}
+                        .content {{
+                            margin: 20px;
+                        }}
+                        .details {{
+                            background-color: #f9f9f9;
+                            padding: 15px;
+                            border: 1px solid #ddd;
+                        }}
+                        .footer {{
+                            margin-top: 20px;
+                            font-size: 0.9em;
+                            color: #888;
+                        }}
+                    </style>
+                </head>
+                <body>
+                    <div class="header">
+                        <img src="cid:logo" style="max-width: 200px;" alt="Wonderlust Tours Logo" />
+                        <h2>Booking Rejected</h2>
+                    </div>
+                    <div class="content">
+                        <h3>Dear {first_name} {last_name},</h3>
+                        <p>We regret to inform you that your booking for the tour '<strong>{tour_title}</strong>' at <strong>{location}</strong> on <strong>{date_of_booking}</strong> has been <span style="color: red;"><strong>rejected</strong></span>.</p>
+                        <div class="details">
+                            <p><strong>Tour Details:</strong></p>
+                            <ul>
+                                <li>Tour name: <strong>{tour_title}</strong></li>
+                                <li><strong>Location:</strong> {location}</li>
+                                <li><strong>Date:</strong> {date_of_booking}</li>
+                                <li><strong>Booking status:</strong> Rejected</li>
+                            </ul>
+                        </div>
+                        <p>If you have any questions or need further assistance, please don't hesitate to contact us.</p>
+                        <p>We apologize for any inconvenience caused.</p>
+                        <div class="footer">
+                            <h4>Best regards,</h4>
+                            <h1>Wonderlust Tours</h1>
+                        </div>
+                    </div>
+                </body>
+                </html>
+                """
+                with routes.open_resource("static/images/logo.jpg") as logo:
+                    msg.attach("logo.jpg", "image/jpeg", logo.read(), 'inline', headers={'Content-ID': '<logo>'})
+                mail.send(msg)
+
+            flash('Tour request denied successfully. Notification email sent to the user.')
             return redirect(url_for('user.bookings'))
 
     with sqlite3.connect('wonderlust_tours.db') as conn:
@@ -366,8 +609,8 @@ def deny_booking(booking_id):
 
     booking_dict = {
         'id': booking[0],
-        'title': booking[1],
-        'username' : booking[7]
+        'title': booking[4],
+        'username': booking[7]
     }
 
     return render_template('admin/deny_tour.html', booking=booking_dict)
