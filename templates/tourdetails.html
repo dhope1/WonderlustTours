@@ -9,17 +9,20 @@
 <h2>Tour Details for {{ user['username'] }}</h2>
 <p><strong>Email:</strong> {{ user['email'] }}</p>
 
-<!-- <div class="slideshow-background">
-  <img src="{{ url_for('static', filename='images/china.jpg') }}" class="active">
-  <img src="{{ url_for('static', filename='images/swan.jpg') }}">
-  <img src="{{ url_for('static', filename='images/bread.jpg') }}">
-  <img src="{{ url_for('static', filename='images/starfish.jpg') }}">
-  <img src="{{ url_for('static', filename='images/tracks.jpg') }}">
-  <img src="{{ url_for('static', filename='images/journey.jpg') }}">
-</div> -->
 
 <h3>Your Bookings</h3>
 {% if bookings %}
+  <div class="flash-messages">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <ul>
+                {% for category, message in messages %}
+                    <li class="{{ category }}">{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
+  </div>
 
 
   <div id="tourList" class="row">
@@ -38,7 +41,7 @@
                   <a href="#" class="btn btn-warning">Pending</a>
                 {% elif booking.status == 'accepted' %}
                   <a href="#" class="btn btn-success">Accepted</a>
-                {% elif booking.status == 'rejected' %}
+                {% elif booking.status == 'denied' %}
                   <a href="#" class="btn btn-danger">Denied</a>
                 {% endif %}
             </div>
