@@ -55,4 +55,18 @@
     z-index: -2; /* Ensures the footer is below the slideshow layer */
     padding: 10px 0;
   }
+
+.flash-messages .success { 
+  color: green; 
+}
+.flash-messages .error { 
+  color: red; 
+}
+.flash-messages .warning { 
+  color: orange; 
+}
+.flash-messages .info { 
+  color: blue; 
+}
+
   
