@@ -4,6 +4,16 @@
 
 <h3>Welcome {{ request.user }}</h3>
 
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <ul class="messages">
+        {% for category, message in messages %}
+        <li class="alert alert-{{ category }}">{{ message }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+{% endwith %}
+
 <div class="dashboard-card-container">
     <div class="dashboard-card">
         <h1>{{ total_tours }}</h1>
@@ -51,8 +61,8 @@
                 <td class="table-responsive">{{ tour.price }}</td>
                 <td class="table-responsive">{{ tour.description }}</td>
                 <td class="table-actions table-responsive">
-                    <a href="" class="edit-button">Edit</a>
-                    <a href="" class="delete-button">Delete</a>
+                    <a href="{{ url_for('user.edit_tour', tour_id=tour.id) }}" class="edit-button">Edit</a>
+                    <a href="{{ url_for('user.delete_tour', tour_id=tour.id) }}" class="delete-button">Delete</a>
                 </td>
             </tr>
             {% endfor %}
