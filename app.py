@@ -2,8 +2,21 @@ from flask import Flask, render_template, request, redirect, url_for
 from routes import routes
 import sqlite3
 import secrets
+from flask_mail import Mail, Message
+from config import mail
 
 app = Flask(__name__)
+
+# Mail configuration
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_PORT'] = 587
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USE_SSL'] = False
+app.config['MAIL_USERNAME'] = 'olowophilly77@gmail.com'
+app.config['MAIL_PASSWORD'] = 'vebi xkhx lntp ksjr'
+app.config['MAIL_DEFAULT_SENDER'] = 'olowophilly77@gmail.com'
+
+mail.init_app(app)
 
 # Database setup
 def init_db():
