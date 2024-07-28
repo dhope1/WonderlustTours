@@ -10,15 +10,15 @@
     </div>
 
     <div class="sidebar-link-container sidebar-link-books">
-        <a href="" class="sidebar-link">
-            <img class="sidebar-image" alt="books" src="" />
+        <a href="{{ url_for('user.bookings') }}" class="sidebar-link">
+            <img class="sidebar-image" alt="books" src="{{ url_for('static', filename='images/booking.png') }}" />
         </a>
         <span class="sidebar-tooltip-books tooltip">Book Requests</span>
     </div>
 
     <div class="sidebar-link-container sidebar-link-fines">
         <a class="sidebar-link" href="">
-            <img class="sidebar-image" alt="fines" src="" />
+            <img class="sidebar-image" alt="fines" src="{{ url_for('static', filename='images/group.png') }}" />
         </a>
         <span class="tooltip sidebar-tooltip-fines">Users</span>
     </div>
